@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,7 +60,7 @@ export const Chat = ({ onClose, contentType, contentTitle }: ChatProps) => {
   };
 
   // Set initial message when chat opens
-  useState(() => {
+  useEffect(() => {
     const initial = getInitialMessage();
     if (initial) {
       setMessages([initial]);
