@@ -7,6 +7,12 @@ import { Chat } from "@/components/Chat";
 const Index = () => {
   const { theme, setTheme } = useTheme();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  
+  // Simulated current content state - this would come from your content management system
+  const currentContent = {
+    type: "video" as const,
+    title: "The Map of Chemistry",
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -76,7 +82,13 @@ const Index = () => {
         </div>
       </main>
 
-      {isChatOpen && <Chat onClose={() => setIsChatOpen(false)} />}
+      {isChatOpen && (
+        <Chat 
+          onClose={() => setIsChatOpen(false)}
+          contentType={currentContent.type}
+          contentTitle={currentContent.title}
+        />
+      )}
     </div>
   );
 };
