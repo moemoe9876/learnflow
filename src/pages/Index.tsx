@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, MessageSquare } from "lucide-react";
+import { useState } from "react";
+import { Chat } from "@/components/Chat";
 
 const Index = () => {
   const { theme, setTheme } = useTheme();
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,17 +32,26 @@ const Index = () => {
       <main className="ml-64 min-h-screen p-8">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-3xl font-bold">Welcome to LearnFlow</h2>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsChatOpen(true)}
+            >
+              <MessageSquare className="h-5 w-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -63,6 +75,8 @@ const Index = () => {
           </div>
         </div>
       </main>
+
+      {isChatOpen && <Chat onClose={() => setIsChatOpen(false)} />}
     </div>
   );
 };
