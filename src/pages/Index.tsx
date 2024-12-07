@@ -1,16 +1,82 @@
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
-import { Moon, Sun, MessageSquare, Upload, History, Layout, Plus } from "lucide-react";
+import { Moon, Sun, MessageSquare, Upload, History, Layout, Plus, Youtube, FileText, Mic } from "lucide-react";
 import { useState } from "react";
 import { Chat } from "@/components/Chat";
+import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
   const { theme, setTheme } = useTheme();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [currentContent, setCurrentContent] = useState<{
+    type: "pdf" | "video" | "audio" | null;
+    title: string | null;
+  }>({ type: null, title: null });
   
-  const currentContent = {
-    type: "video" as const,
-    title: "Introduction to Machine Learning",
+  const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    if (file.type !== 'application/pdf') {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload a PDF file",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Simulate upload - replace with actual upload logic
+    toast({
+      title: "PDF uploaded successfully",
+      description: `${file.name} has been uploaded`,
+    });
+    
+    setCurrentContent({
+      type: "pdf",
+      title: file.name
+    });
+    setIsChatOpen(true);
+  };
+
+  const handleYoutubeLink = () => {
+    // For demo purposes - replace with actual YouTube link handling
+    const url = prompt("Enter YouTube URL:");
+    if (!url) return;
+    
+    if (!url.includes('youtube.com') && !url.includes('youtu.be')) {
+      toast({
+        title: "Invalid URL",
+        description: "Please enter a valid YouTube URL",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "YouTube video added",
+      description: "Video has been added to your space",
+    });
+
+    setCurrentContent({
+      type: "video",
+      title: "YouTube Video"
+    });
+    setIsChatOpen(true);
+  };
+
+  const handleRecordLecture = () => {
+    // For demo purposes - replace with actual recording logic
+    toast({
+      title: "Recording feature",
+      description: "Audio recording will be implemented in the next phase",
+    });
+
+    setCurrentContent({
+      type: "audio",
+      title: "Recorded Lecture"
+    });
+    setIsChatOpen(true);
   };
 
   return (
@@ -74,22 +140,39 @@ const Index = () => {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-lg border bg-card p-6 hover:border-primary/50 transition-colors cursor-pointer">
-              <Upload className="h-8 w-8 mb-4" />
+            {/* PDF Upload Card */}
+            <label className="rounded-lg border bg-card p-6 hover:border-primary/50 transition-colors cursor-pointer">
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={handlePdfUpload}
+                className="hidden"
+              />
+              <FileText className="h-8 w-8 mb-4" />
               <h3 className="text-xl font-semibold mb-2">Upload PDF</h3>
               <p className="text-muted-foreground">
                 Upload your PDF documents for AI-powered learning
               </p>
-            </div>
-            <div className="rounded-lg border bg-card p-6 hover:border-primary/50 transition-colors cursor-pointer">
-              <Upload className="h-8 w-8 mb-4" />
+            </label>
+
+            {/* YouTube Link Card */}
+            <div 
+              className="rounded-lg border bg-card p-6 hover:border-primary/50 transition-colors cursor-pointer"
+              onClick={handleYoutubeLink}
+            >
+              <Youtube className="h-8 w-8 mb-4" />
               <h3 className="text-xl font-semibold mb-2">YouTube Link</h3>
               <p className="text-muted-foreground">
                 Add YouTube videos to your learning space
               </p>
             </div>
-            <div className="rounded-lg border bg-card p-6 hover:border-primary/50 transition-colors cursor-pointer">
-              <Upload className="h-8 w-8 mb-4" />
+
+            {/* Record Lecture Card */}
+            <div 
+              className="rounded-lg border bg-card p-6 hover:border-primary/50 transition-colors cursor-pointer"
+              onClick={handleRecordLecture}
+            >
+              <Mic className="h-8 w-8 mb-4" />
               <h3 className="text-xl font-semibold mb-2">Record Lecture</h3>
               <p className="text-muted-foreground">
                 Record and transcribe your lectures
@@ -99,11 +182,11 @@ const Index = () => {
         </div>
       </main>
 
-      {isChatOpen && (
+      {isChatOpen && currentContent.type && (
         <Chat 
           onClose={() => setIsChatOpen(false)}
           contentType={currentContent.type}
-          contentTitle={currentContent.title}
+          contentTitle={currentContent.title || undefined}
         />
       )}
     </div>
